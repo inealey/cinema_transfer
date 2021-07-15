@@ -1,17 +1,48 @@
 #!/usr/bin/env python
 
+import os
 import socket, select
 import traceback
 import pickle
 import argparse
 
-# ## environment
-# OUTPATH = '/mnt/d/cinema_stream_debug/output_debug.cdb'
+
+def generate_csv(path, steps, phi, theta):
+    """
+    path: path to new cinema db
+    steps: number of timesteps in sim
+    phi: cinema phi resolution
+    theta: cinema theta resolution
+    
+    overwrites existing data.csv
+    for now, assumes file names follow the convention below
+    """
+    fname_template = 'RenderView_1_{}p={:.2f}t={:.2f}.png'
+    phi_step = 360 / phi
+    theta_step = 360 / theta
+    
+    file = open(path + '/data.csv', 'wt')
+    file.write('time,phi,theta,FILE\n')
+    for s in range(steps):
+        for p in range(phi):
+            for t in range(theta):
+                file.write('{:.1f}'.format(s) + 
+                           ',' + 
+                           '{:.2f}'.format(p * phi_step) + 
+                           ',' + 
+                           '{:.2f}'.format(t * theta_step) + 
+                           ',' + 
+                           fname_template.format(str(s).zfill(6), 
+                                p * phi_step, t * theta_step) + '\n'
+                           )
+    file.close()
+    return True
+    
 
 def recv_object(sock, initial, size):
     """
     sock: socket to read from
-    initial: bytes already recieved 
+    initial: bytes in object already recieved 
     size: total length of flattened object to recieve
     returns: unserialized object
     (for now, assuming data from a single timestep fits into memory)
@@ -36,6 +67,13 @@ def main(config):
     server_socket.bind((config.host, config.port))
     server_socket.listen(10)
     connected_clients_sockets.append(server_socket)
+    
+    ## generate data.csv file for cinema database
+    if os.path.isfile(config.output + '/data.csv'):
+        print('found existing database file: ' + config.output + '/data.csv')
+    else:
+        print('generating cinema description: ' + config.output + '/data.csv')
+        generate_csv(config.output, config.timesteps, config.phi, config.theta)
     
     ## main loop
     while True:
@@ -87,6 +125,7 @@ def main(config):
 
                             print('wrote ' + str(dataSize / 1000000) + ' MB to: ' + config.output + '.')
                             
+                            
                         ## close socket if done
                         elif data.startswith(b'DONE'):
                             sock.shutdown(socket.SHUT_RDWR)
@@ -109,11 +148,19 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     
-    ## socket and path setup
+    ## socket and path settings
     parser.add_argument('--host', type=str, default='127.0.0.1')
     parser.add_argument('--port', type=int, default=10001)
     parser.add_argument('--output', type=str, default='output',
                        help='path to write cinema database')
+    
+    ## extractor settings
+    parser.add_argument('--timesteps', type=int, default=10,
+                       help='total number of timesteps in simulation')
+    parser.add_argument('--phi', type=int, default=6,
+                       help='phi resolution of extractor')
+    parser.add_argument('--theta', type=str, default=6,
+                       help='theta resolution of extractor')
     
     ## parse cmd line args and start server
     config = parser.parse_args()
