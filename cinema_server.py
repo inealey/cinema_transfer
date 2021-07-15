@@ -17,7 +17,7 @@ def generate_csv(path, steps, phi, theta):
     overwrites existing data.csv
     for now, assumes file names follow the convention below
     """
-    fname_template = 'RenderView_1_{}p={:.2f}t={:.2f}.png'
+    fname_template = 'RenderView1_{}p={:06.2f}t={:06.2f}.png'
     phi_step = 360 / phi
     theta_step = 360 / theta
     
@@ -159,7 +159,7 @@ if __name__ == '__main__':
                        help='total number of timesteps in simulation')
     parser.add_argument('--phi', type=int, default=6,
                        help='phi resolution of extractor')
-    parser.add_argument('--theta', type=str, default=6,
+    parser.add_argument('--theta', type=int, default=6,
                        help='theta resolution of extractor')
     
     ## parse cmd line args and start server
