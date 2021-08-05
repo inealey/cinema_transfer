@@ -15,7 +15,7 @@ total_time = 0
 start = time.time()
 
 ## transfer images for 
-while steps < NUM_STEPS + 1:
+while step < NUM_STEPS + 1:
     images = glob(IMAGE_DIR + '/*')
     if any(step_pretty in i for i in images):
         current = [step_pretty in i for i in images]
@@ -28,6 +28,7 @@ while steps < NUM_STEPS + 1:
                 os.system('python3 /home/sensei/cinema_transfer/cinema_client.py --name osc --input {}'.format(IMAGE_DIR))
 
                 elapsed = time.time() - start
+                print(elapsed)
                 if step != 0:
                     total_time += elapsed
                 start = time.time()
