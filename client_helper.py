@@ -13,7 +13,7 @@ while True:
     if any(step_pretty in i for i in images):
         current = [step_pretty in i for i in images]
         
-         if np.unique(current, return_counts=True)[1][1] == IMG_COUNT:
+        if np.unique(current, return_counts=True)[1][1] == IMG_COUNT:
          #if len(images) % IMG_COUNT == 0:
             
             print('calling cinema client')
