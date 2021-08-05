@@ -12,19 +12,19 @@ while True:
     images = glob(IMAGE_DIR + '/*')
     if any(step_pretty in i for i in images):
         current = [step_pretty in i for i in images]
-        
-        if np.unique(current, return_counts=True)[1][1] == IMG_COUNT:
-         #if len(images) % IMG_COUNT == 0:
+        truth_counts = np.unique(current, return_counts=True)
+        if len(truth_counts[1] > 1):
+            if np.unique(current, return_counts=True)[1][1] == IMG_COUNT:
             
-            print('calling cinema client')
+                print('calling cinema client')
             
-            start = time.time()
+                start = time.time()
             
-            os.system('python3 cinema_client.py --name osc --input %'.format(IMAGE_DIR))
+                os.system('python3 cinema_client.py --name osc --input %'.format(IMAGE_DIR))
             
-            elapsed = time.time() - start
-            print('time elapsed: ' + str(elapsed)) 
+                elapsed = time.time() - start
+                print('time elapsed: ' + str(elapsed)) 
  
-            step += 1
-            step_pretty = str(step).zfill(6)
+                step += 1
+                step_pretty = str(step).zfill(6)
             
