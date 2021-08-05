@@ -16,7 +16,7 @@ start = time.time()
 
 ## transfer images for 
 while step < NUM_STEPS + 1:
-    images = glob(IMAGE_DIR + '/*')
+    images = sorted(glob(IMAGE_DIR + '/*'))
     if any(step_pretty in i for i in images):
         current = [step_pretty in i for i in images]
         truth_counts = np.unique(current, return_counts=True)
